@@ -32,7 +32,7 @@
 
 ### 错误检验：
 
-对输入的代码进行一下类型的错误检验
+对输入的代码进行以下类型的错误检验
 
 ```c++
 // Store error type and position, type:
