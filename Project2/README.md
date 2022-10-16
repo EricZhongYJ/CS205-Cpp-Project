@@ -35,7 +35,7 @@
 对输入的代码进行以下类型的错误检验
 
 ```c++
-// Store error type and position, type:
+// Error type:
 //  (format:) 1: invalid variable name     2: no input                    3: start with equal sign
 //            4: invalid char              5: different number of ()      6: wrong number of nums or ops
 //            7: number follow variable    8: operator follow operator / input start with operator
