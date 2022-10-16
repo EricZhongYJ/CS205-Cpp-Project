@@ -30,6 +30,19 @@
 * 结果储存：`ans`、自定义变量:`num = 1`
 * 退出：`q`
 
+### 错误检验：
+
+对输入的代码进行一下类型的错误检验
+
+```c++
+// Store error type and position, type:
+//  (format:) 1: invalid variable name     2: no input                    3: start with equal sign
+//            4: invalid char              5: different number of ()      6: wrong number of nums or ops
+//            7: number follow variable    8: operator follow operator / input start with operator
+//  (number:) 9: more than one dots        10: float exponent             11: more than one 'e'
+// (compute:) 12: divide by zero           13: include inf or nan         14: invalid operator
+```
+
 ## 2. 代码运行
 
 使用`cmake`来编译并运行：
