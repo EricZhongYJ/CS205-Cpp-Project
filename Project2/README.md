@@ -43,6 +43,18 @@
 // (compute:) 12: divide by zero           13: include inf or nan         14: invalid operator
 ```
 
+### 其他亮点：
+
+程序会在告知错误前标明**错误的具体位置**，例如：
+
+```
+Input: 3+4_3
+Output: 
+3+4_3
+   ^~~~~~  ("_" is invalid)
+There is invalid char in the input. Please try again.
+```
+
 ## 2. 代码运行
 
 使用`cmake`来编译并运行：
