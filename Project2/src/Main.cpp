@@ -247,7 +247,7 @@ void calculate()
         tmp = tmp.minus(Number(Integer(1), Integer(0)));
         while (tmp.coeN.len > 0 && !tmp.coeN.neg)
         {
-            numSet[numPt] = numSet[numPt].prod(tmp);
+            numSet[numPt] = numSet[numPt].prod(tmp.copy());
             tmp = tmp.minus(Number(Integer(1), Integer(0)));
         }
         goto RET_CAL;
