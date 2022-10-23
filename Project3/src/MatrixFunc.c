@@ -3,7 +3,7 @@
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 // Version: gcc (MinGW.org GCC Build-2) 9.2.0
-// Date: 2022/10/23
+// Date: 2022/10/24
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +14,7 @@
 Matrix *createMatrix(int row_, int col_, __f *data_)
 {
     // Check if the pointer is NULL, return 0x0 Matrix
-    if (!data_)
+    if ((row_ || col_) && !data_)
         return NULLMatrix;
     Matrix *ret = (Matrix *)malloc(__SIZEM);
     ret->row = row_;
@@ -102,7 +102,7 @@ int deleteMatrix(Matrix *mat)
 // Transform a matrix to string
 char *to_string(const Matrix *mat)
 {
-    if (!mat || mat->row == 0 || mat->col == 0)
+    if (!mat || !mat->data || mat->row == 0 || mat->col == 0)
         return (char *)"Matrix 0x0: []\n";
     int row = mat->row, col = mat->col;
     __f *data = mat->data;
@@ -158,7 +158,7 @@ int cofactorMatrix(const Matrix *mat, int rowAt, int colAt, Matrix *ret)
 // Add two matrices
 int addMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 {
-    if (!oth)
+    if (!oth || !oth->data)
         return -2;
     __CheckMatRet;
     if (mat->row != oth->row || mat->col != oth->col)
@@ -171,7 +171,7 @@ int addMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 // Subtraction of two matrices
 int subtractMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 {
-    if (!oth)
+    if (!oth || !oth->data)
         return -2;
     __CheckMatRet;
     if (mat->row != oth->row || mat->col != oth->col)
@@ -207,7 +207,7 @@ int multiplyScalar(const Matrix *mat, __f num, Matrix *ret)
 int multiplyMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 {
     // Check and reset Matrix ret
-    if (!oth)
+    if (!oth || !oth->data)
         return -2;
     __CheckMatRet;
     if (mat->col != oth->row)
@@ -238,7 +238,7 @@ int multiplyMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 // Find the minimal values of a matrix
 __f minOfMatrix(const Matrix *mat)
 {
-    if (!mat || mat->row == 0 || mat->col == 0)
+    if (!mat || !mat->data || mat->row == 0 || mat->col == 0)
         return NULLF;
     int row = mat->row, col = mat->col;
     __f *data = mat->data, ret = data[0];
@@ -251,7 +251,7 @@ __f minOfMatrix(const Matrix *mat)
 // Find the maximal values of a matrix
 __f maxOfMatrix(const Matrix *mat)
 {
-    if (!mat || mat->row == 0 || mat->col == 0)
+    if (!mat || !mat->data || mat->row == 0 || mat->col == 0)
         return NULLF;
     int row = mat->row, col = mat->col;
     __f *data = mat->data, ret = data[0];
@@ -265,7 +265,7 @@ __f maxOfMatrix(const Matrix *mat)
 __f det(const Matrix *mat)
 {
     // Check if exist and rows equals columns
-    if (!mat || mat->row == 0 || mat->col != mat->row)
+    if (!mat || !mat->data || mat->row == 0 || mat->col != mat->row)
         return NULLF;
     // Copy the data
     int row = mat->row, col = mat->col;

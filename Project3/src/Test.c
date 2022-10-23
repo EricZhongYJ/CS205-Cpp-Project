@@ -3,7 +3,7 @@
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 // Version: gcc (MinGW.org GCC Build-2) 9.2.0
-// Date: 2022/10/23
+// Date: 2022/10/24
 #include "../inc/Matrix.h"
 #include <stdio.h>
 #include <stdlib.h>

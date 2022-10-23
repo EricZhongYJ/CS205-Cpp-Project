@@ -3,7 +3,7 @@
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 // Version: gcc (MinGW.org GCC Build-2) 9.2.0
-// Date: 2022/10/23
+// Date: 2022/10/24
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
@@ -11,7 +11,9 @@
 // If you want to use double or long double, replace the float into them.
 typedef float __f;
 #define fFormat "%f"
+// Define the NULL float and NULL matrix
 #define NULLF 1.23456e11f // random number
+#define NULLMatrix createMatrix(0, 0, NULL)
 
 // Define the size of float and Matrix
 #define __SIZEF __SIZEOF_FLOAT__
@@ -92,9 +94,9 @@ int rotate90(const Matrix *mat, Matrix *ret);
         if (ret->data)                                      \
             free(ret->data);                                \
         ret->row = _row, ret->col = _col;                   \
-        ret->data = (__f *)malloc((_row) * (_col)*__SIZEF);    \
+        ret->data = (__f *)malloc((_row) * (_col)*__SIZEF); \
     }                                                       \
-    __f *data = mat->data, *data_ = ret->data;                \
+    __f *data = mat->data, *data_ = ret->data;              \
     for (int i = 0; i < _row; ++i)                          \
         for (int j = 0; j < _col; ++j)                      \
         {                                                   \
@@ -102,13 +104,10 @@ int rotate90(const Matrix *mat, Matrix *ret);
         }
 
 // Check if Matrix mat and ret are NULL pointer
-#define __CheckMatRet \
-    if (!mat)         \
-        return -1;    \
-    if (!ret)         \
+#define __CheckMatRet       \
+    if (!mat || !mat->data) \
+        return -1;          \
+    if (!ret)               \
         return -3;
-
-// Define the NULL matrix
-#define NULLMatrix createMatrix(0, 0, (__f *)malloc(__SIZEF))
 
 #endif

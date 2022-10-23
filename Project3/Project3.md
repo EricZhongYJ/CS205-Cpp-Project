@@ -118,7 +118,7 @@ Matrix 2x2:
 
 注：将`float`类型定义为`__f`，如果需要使用`double`等其他类型时，便于转换。
 
-```c++
+```c
 // Compute the determinant of the matrix
 __f det(const Matrix *mat)
 {
@@ -208,21 +208,264 @@ int inv(const Matrix *mat, Matrix *ret)
 
 #### Test case #1: 基本要求的实现
 
-注：程序中统一采用科学计数法进行输出
+注：程序中统一采用科学计数法进行输出字符串
+
+文件[`Demo1.c`](./Demo1.c)：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include "inc/Matrix.h"
+// #include "src/MatrixFunc.c"
+// For output
+#define __show(n, mat)             \
+    temp = to_string(mat);         \
+    printf("mat%d = %s", n, temp); \
+    if (mat->row && mat->col)      \
+        free(temp);
+// Main method
+int main()
+{
+    char *temp; // For freeing
+    Matrix *mat1 = NULLMatrix;
+    __show(1, mat1);
+    Matrix *mat2 = createMatrix(1, 2, (__f *)malloc(2 * __SIZEF));
+    __show(2, mat2);
+    Matrix *mat3 = createMatrixFromStr("[1, 2;3 4; ]");
+    __show(3, mat3);
+    printf("=======================================\n");
+    copyMatrix(mat3, mat1);
+    __show(1, mat1);
+    deleteMatrix(mat3);
+    mat3 = createMatrixFromStr("[1,2,3;4,5,6;7,8,9]");
+    __show(3, mat3);
+    subMatrix(mat3, 1, 3, 1, 3, mat2);
+    __show(2, mat2);
+    cofactorMatrix(mat3, 1, 1, mat1);
+    __show(1, mat1);
+    printf("=======================================\n");
+    // mat1 = [1,3;7,9], mat2 = [5,6;8,9];
+    addMatrix(mat1, mat2, mat3);
+    __show(3, mat3);
+    subtractMatrix(mat1, mat2, mat3);
+    __show(3, mat3);
+    addScalar(mat2, 0.1, mat3);
+    __show(3, mat3);
+    subtractScalar(mat2, 0.1, mat3);
+    __show(3, mat3);
+    multiplyMatrix(mat1, mat2, mat3);
+    __show(3, mat3);
+    multiplyScalar(mat2, 0.5, mat3);
+    __show(3, mat3);
+    printf("=======================================\n");
+    // mat1 = [1,3;7,9], mat2 = [5,6;8,9];
+    printf("determinant of mat1 = %f\n", det(mat1));
+    printf("determinant of mat2 = %f\ninverse of mat1 = ", det(mat2));
+    inv(mat1, mat3);
+    __show(3, mat3);
+    multiplyMatrix(mat1, mat3, mat2);
+    __show(2, mat2);
+    printf("=======================================\n");
+    // mat1 = [1,3;7,9];
+    transpose(mat1, mat2);
+    __show(2, mat2);
+    rotate90(mat1, mat3);
+    __show(3, mat3);
+    printf("minimal of mat3 = %f\n", minOfMatrix(mat3));
+    printf("maximal of mat3 = %f\n", maxOfMatrix(mat3));
+    return 0;
+}
+```
+
+通过动态链接库编译运行：
+
+```bash
+gcc -shared -fPIC ./src/MatrixFunc.c -o libMatrix.so
+gcc ./Demo1.c -o Demo1 -L. -lMatrix
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH # Linux
+./Demo1
+```
+
+输出：
+
+```
+mat1 = Matrix 0x0: []
+mat2 = Matrix 1x2:
+[
+   0.000000e+00   0.000000e+00
+]
+mat3 = Matrix 2x2:
+[
+   1.000000e+00   2.000000e+00
+   3.000000e+00   4.000000e+00
+]
+=======================================
+mat1 = Matrix 2x2:
+[
+   1.000000e+00   2.000000e+00
+   3.000000e+00   4.000000e+00
+]
+mat3 = Matrix 3x3:
+[
+   1.000000e+00   2.000000e+00   3.000000e+00
+   4.000000e+00   5.000000e+00   6.000000e+00
+   7.000000e+00   8.000000e+00   9.000000e+00
+]
+mat2 = Matrix 2x2:
+[
+   5.000000e+00   6.000000e+00
+   8.000000e+00   9.000000e+00
+]
+mat1 = Matrix 2x2:
+[
+   1.000000e+00   3.000000e+00
+   7.000000e+00   9.000000e+00
+]
+=======================================
+mat3 = Matrix 2x2:
+[
+   6.000000e+00   9.000000e+00
+   1.500000e+01   1.800000e+01
+]
+mat3 = Matrix 2x2:
+[
+  -4.000000e+00  -3.000000e+00
+  -1.000000e+00   0.000000e+00
+]
+mat3 = Matrix 2x2:
+[
+   5.100000e+00   6.100000e+00
+   8.100000e+00   9.100000e+00
+]
+mat3 = Matrix 2x2:
+[
+   4.900000e+00   5.900000e+00
+   7.900000e+00   8.900000e+00
+]
+mat3 = Matrix 2x2:
+[
+   2.900000e+01   3.300000e+01
+   1.070000e+02   1.230000e+02
+]
+mat3 = Matrix 2x2:
+[
+   2.500000e+00   3.000000e+00
+   4.000000e+00   4.500000e+00
+]
+=======================================
+determinant of mat1 = -12.000000
+determinant of mat2 = -3.000002
+inverse of mat1 = mat3 = Matrix 2x2:
+[
+  -7.500000e-01   2.500000e-01
+   5.833333e-01  -8.333334e-02
+]
+mat2 = Matrix 2x2:
+[
+   1.000000e+00   0.000000e+00
+   0.000000e+00   1.000000e+00
+]
+=======================================
+mat2 = Matrix 2x2:
+[
+   1.000000e+00   7.000000e+00
+   3.000000e+00   9.000000e+00
+]
+mat3 = Matrix 2x2:
+[
+   3.000000e+00   9.000000e+00
+   1.000000e+00   7.000000e+00
+]
+minimal of mat3 = 1.000000
+maximal of mat3 = 9.000000
+```
+
+图片较长，与上面的结果相同，不在此附图。
 
 
 
 #### Test case #2: 对错误输入的判断
 
+文件[`Demo2.c`](./Demo2.c)：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include "inc/Matrix.h"
+// #include "src/MatrixFunc.c"
+// Error tips
+const char *ERR_STR[] = {"",
+     "Input Matrix mat is NULL pointer\n",
+     "Input Matrix oth is NULL pointer\n",
+     "Output Matrix ret is NULL pointer\n",
+     "The size of input Matrix is wrong\n",
+     "The input float row or col is wrong\n",
+     "The Matrix is not invertible\n"};
+// Main method
+main()
+{
+    Matrix *mat1 = createMatrixFromStr("[0]");
+    Matrix *mat2 = createMatrix(1, 2, (__f *)malloc(2 * __SIZEF));
+    Matrix *mat3 = NULLMatrix;
+    Matrix *mat4 = NULL;
+    int code = inv(mat4, mat2);
+    printf(ERR_STR[-code]);
+    code = addMatrix(mat1, mat4, mat2);
+    printf(ERR_STR[-code]);
+    code = subtractScalar(mat1, 2, mat4);
+    printf(ERR_STR[-code]);
+    code = multiplyMatrix(mat2, mat1, mat3);
+    printf(ERR_STR[-code]);
+    code = subMatrix(mat1, -1, 1, 0, 1, mat3);
+    printf(ERR_STR[-code]);
+    code = inv(mat1, mat2);
+    printf(ERR_STR[-code]);
+    return 0;
+}
+```
+
+输出：
+
+```
+Input Matrix mat is NULL pointer
+Input Matrix oth is NULL pointer
+Output Matrix ret is NULL pointer
+The size of input Matrix is wrong
+The input float row or col is wrong
+The Matrix is not invertible
+```
+
+<img src="C:\Users\钟元吉\AppData\Roaming\Typora\typora-user-images\image-20221024023735349.png" alt="image-20221024023735349" style="zoom:67%;" />
 
 
-#### Test case #3: 对错误输入的判断
 
+#### Test case #3: 程序特色功能：交互式的矩阵计算器
 
+通过`makefile`编译运行：
 
-#### Test case #4: 程序特色功能
+```bash
+make
+```
 
+输出提示：
 
+```
+Matrix Calculator:
+Operation:
+        1:Define the matrix                     2:View the matrix
+        3:Get the submatrix                     4:Get cofactor matrix
+        5:Add two matrices                      6:Subtract two matrices
+        7:Add matrix and scalar                 8:Subtract matrix and scalar
+        9:Multiply two matrices                 10:Multiply matrix and scalar
+        11:Get minimal of matrix                12:Get maximal of matrix
+        13:Get determinant of matrix            14:Get inverse of matrix
+        15:Transpose the matrix                 16:Rotate 90 degree on the matrix
+        q:quit
+```
+
+<img src="C:\Users\钟元吉\AppData\Roaming\Typora\typora-user-images\image-20221024023831958.png" alt="image-20221024023831958" style="zoom:67%;" />
+
+程序内可自由测试，这里不做赘述。
 
 
 
