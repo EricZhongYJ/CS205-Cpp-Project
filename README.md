@@ -23,7 +23,7 @@
 g++ source.cpp -o mul & mul 1 2
 ```
 
-对于文件数量超过1的文件可以使用`cmake`来编译，如(Project2中)：
+对于文件数量超过1的文件可以使用`cmake`或`make`来编译，如(Project2中)：
 
 ```bash
 cmake . & make
