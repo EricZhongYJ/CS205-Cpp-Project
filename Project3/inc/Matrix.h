@@ -14,7 +14,7 @@ typedef float f;
 
 // Define the size of float and Matrix
 #define SIZE_F 4
-#ifdef __WIN32
+#ifdef _WIN32
 #define SIZE_M 12
 #else
 #define SIZE_M 16
@@ -38,7 +38,7 @@ typedef struct Matrix Matrix;
 //             -6:the Matrix is not invertible
 // Create a matrix from string or data
 Matrix *createMatrix(int row_, int col_, f *data_);
-Matrix *createMatrixFromStr(char *str);
+Matrix *createMatrixFromStr(const char *strOrg);
 
 // Delete a matrix
 int deleteMatrix(Matrix *mat);

@@ -106,12 +106,12 @@
 
 // Error tips
 const char *ERR_STR[] = {"",
-                         "input Matrix mat is NULL pointer\n",
-                         "input Matrix oth is NULL pointer\n",
-                         "output Matrix ret is NULL pointer\n",
-                         "the size of input Matrix is wrong\n",
-                         "the input float row or col is wrong\n",
-                         "the Matrix is not invertible\n"};
+                         "Input Matrix mat is NULL pointer\n",
+                         "Input Matrix oth is NULL pointer\n",
+                         "Output Matrix ret is NULL pointer\n",
+                         "The size of input Matrix is wrong\n",
+                         "The input float row or col is wrong\n",
+                         "The Matrix is not invertible\n"};
 
 // main method
 int main(int argc, char const *argv[])
@@ -149,6 +149,13 @@ int main(int argc, char const *argv[])
                 printf("Please input a matrix(using '[,;]'):\n");
                 scanf("%s", input);
                 temp = createMatrixFromStr(input);
+                if (temp->col != 0 && temp->row != 0 && err > 0)
+                {
+                    tempStr = to_string(temp);
+                    printf(tempStr);
+                    if (temp->row != 0 && temp->col != 0)
+                        free(tempStr);
+                }
                 __SetMatBack(id1);
             case '0':
                 __Choose("a");

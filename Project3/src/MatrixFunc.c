@@ -23,12 +23,15 @@ Matrix *createMatrix(int row_, int col_, f *data_)
 }
 
 // Create a matrix from string
-Matrix *createMatrixFromStr(char *str)
+Matrix *createMatrixFromStr(const char *strOrg)
 {
-    if (!str)
+    if (!strOrg)
         return NULLMatrix;
+    // Copy the string
+    int orgLen = (int)strlen(strOrg);
+    char *str = (char *)malloc(orgLen * sizeof(char));
+    strcpy(str, strOrg);
     // Replace the blanks into ','
-    int orgLen = (int)strlen(str);
     for (int i = 0, j = 0; j <= orgLen; ++j)
         if (str[j] != ' ')
             str[i++] = str[j];
@@ -76,11 +79,11 @@ Matrix *createMatrixFromStr(char *str)
         }
     if (At < len)
         goto RETURN_NULL;
+    free(str);
     ret->data = data_;
     return ret;
 RETURN_NULL:
-    free(ret);
-    free(data_);
+    free(str), free(ret), free(data_);
     return NULLMatrix;
 }
 
