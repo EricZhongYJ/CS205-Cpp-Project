@@ -46,7 +46,7 @@ Matrix *mat = createMatrixFromStr("[1,2;3 4]");
 | 取子矩阵或余子式时输入的行数或列数越界或有误       |      -5      |
 | 求逆矩阵时，矩阵不可逆                             |      -6      |
 
-```c++
+```c
 // Return int:  1:sucessful
 //             -1:input Matrix mat is NULL pointer
 //             -2:input Matrix oth is NULL pointer
