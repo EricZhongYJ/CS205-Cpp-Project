@@ -2,6 +2,7 @@
 // Author: 12012613 Zhong Yuanji钟元吉
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
+// Version: gcc (MinGW.org GCC Build-2) 9.2.0
 // Date: 2022/10/23
 #include "../inc/Matrix.h"
 #include <stdio.h>
@@ -10,7 +11,7 @@
 
 // This file is to test and also an implement.
 // Clear the bash under different operation system
-#ifdef _WIN32
+#ifndef __linux
 #define __CLEAR "cls"
 #else
 #define __CLEAR "clear"
@@ -119,7 +120,7 @@ int main(int argc, char const *argv[])
     char input[1000];
     int id1, id2, err = 1;
     char check, *tempStr;
-    f num1, num2, num3, num4;
+    __f num1, num2, num3, num4;
     Matrix *temp = NULLMatrix;
     Matrix *mats[10];
     for (int i = 0; i < 10; ++i)

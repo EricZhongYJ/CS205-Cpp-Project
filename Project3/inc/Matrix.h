@@ -2,29 +2,30 @@
 // Author: 12012613 Zhong Yuanji钟元吉
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
+// Version: gcc (MinGW.org GCC Build-2) 9.2.0
 // Date: 2022/10/23
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
 // Define data type to store by float
 // If you want to use double or long double, replace the float into them.
-typedef float f;
+typedef float __f;
 #define fFormat "%f"
-#define NULLF 1.23456e10f // random number
+#define NULLF 1.23456e11f // random number
 
 // Define the size of float and Matrix
-#define SIZE_F 4
-#ifdef _WIN32
-#define SIZE_M 12
+#define __SIZEF __SIZEOF_FLOAT__
+#ifdef __WIN32
+#define __SIZEM 12
 #else
-#define SIZE_M 16
+#define __SIZEM 16
 #endif
 
 // Matrix struct
 struct Matrix
 {
     int row, col;
-    f *data;
+    __f *data;
 };
 typedef struct Matrix Matrix;
 
@@ -37,7 +38,7 @@ typedef struct Matrix Matrix;
 //             -5:the input float row or col is wrong
 //             -6:the Matrix is not invertible
 // Create a matrix from string or data
-Matrix *createMatrix(int row_, int col_, f *data_);
+Matrix *createMatrix(int row_, int col_, __f *data_);
 Matrix *createMatrixFromStr(const char *strOrg);
 
 // Delete a matrix
@@ -59,21 +60,22 @@ int addMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret);
 // Subtraction of two matrices
 int subtractMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret);
 // Add a scalar to a matrix
-int addScalar(const Matrix *mat, f num, Matrix *ret);
+int addScalar(const Matrix *mat, __f num, Matrix *ret);
 // Subtract a scalar from a matrix
-int subtractScalar(const Matrix *mat, f num, Matrix *ret);
+int subtractScalar(const Matrix *mat, __f num, Matrix *ret);
 // Multiply a matrix with a scalar
-int multiplyScalar(const Matrix *mat, f num, Matrix *ret);
+int multiplyScalar(const Matrix *mat, __f num, Matrix *ret);
 // Multiply two matrices
 int multiplyMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret);
 
 // Find the minimal values of a matrix
-f minOfMatrix(const Matrix *mat);
+__f minOfMatrix(const Matrix *mat);
 // Find the maximal values of a matrix
-f maxOfMatrix(const Matrix *mat);
+__f maxOfMatrix(const Matrix *mat);
 
 // Compute the determinant
-f det(const Matrix *mat);
+__f det(const Matrix *mat);
+
 // Compute the inverse
 int inv(const Matrix *mat, Matrix *ret);
 
@@ -82,7 +84,7 @@ int transpose(const Matrix *mat, Matrix *ret);
 // Rotate 90 degree on the matrix
 int rotate90(const Matrix *mat, Matrix *ret);
 
-// Create datas to store for creating matrix
+// Create datas to store for change return matrix ret
 #define __RetMat(_row, _col, _code)                         \
     int row = mat->row, col = mat->col;                     \
     if (!ret->data || ret->row != _row || ret->col != _col) \
@@ -90,9 +92,9 @@ int rotate90(const Matrix *mat, Matrix *ret);
         if (ret->data)                                      \
             free(ret->data);                                \
         ret->row = _row, ret->col = _col;                   \
-        ret->data = (f *)malloc((_row) * (_col)*SIZE_F);    \
+        ret->data = (__f *)malloc((_row) * (_col)*__SIZEF);    \
     }                                                       \
-    f *data = mat->data, *data_ = ret->data;                \
+    __f *data = mat->data, *data_ = ret->data;                \
     for (int i = 0; i < _row; ++i)                          \
         for (int j = 0; j < _col; ++j)                      \
         {                                                   \
@@ -107,6 +109,6 @@ int rotate90(const Matrix *mat, Matrix *ret);
         return -3;
 
 // Define the NULL matrix
-#define NULLMatrix createMatrix(0, 0, (f *)malloc(sizeof(f)))
+#define NULLMatrix createMatrix(0, 0, (__f *)malloc(__SIZEF))
 
 #endif

@@ -2,6 +2,7 @@
 // Author: 12012613 Zhong Yuanji钟元吉
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
+// Version: gcc (MinGW.org GCC Build-2) 9.2.0
 // Date: 2022/10/23
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,12 +11,12 @@
 
 // Functions:
 // Create a matrix from Data
-Matrix *createMatrix(int row_, int col_, f *data_)
+Matrix *createMatrix(int row_, int col_, __f *data_)
 {
     // Check if the pointer is NULL, return 0x0 Matrix
     if (!data_)
         return NULLMatrix;
-    Matrix *ret = (Matrix *)malloc(SIZE_M);
+    Matrix *ret = (Matrix *)malloc(__SIZEM);
     ret->row = row_;
     ret->col = col_;
     ret->data = data_;
@@ -51,10 +52,10 @@ Matrix *createMatrixFromStr(const char *strOrg)
         else if (str[i] == ',' && !countF)
             ++countD;
     // Read from string
-    Matrix *ret = (Matrix *)malloc(SIZE_M);
+    Matrix *ret = (Matrix *)malloc(__SIZEM);
     int At = 1;
     ret->row = countF + 1, ret->col = countD + 1;
-    f *data_ = (f *)malloc((countF + 1) * (countD + 1) * SIZE_F);
+    __f *data_ = (__f *)malloc((countF + 1) * (countD + 1) * __SIZEF);
     for (int i = 0; i <= countF; ++i)
         for (int j = 0; j <= countD; ++j, ++At)
         {
@@ -104,7 +105,7 @@ char *to_string(const Matrix *mat)
     if (!mat || mat->row == 0 || mat->col == 0)
         return (char *)"Matrix 0x0: []\n";
     int row = mat->row, col = mat->col;
-    f *data = mat->data;
+    __f *data = mat->data;
     char *ret = (char *)malloc((15 * row * col + row + 25) * sizeof(char));
     char *tmp = (char *)malloc(20 * sizeof(char));
     sprintf(ret, "Matrix %dx%d:\n[\n", row, col);
@@ -162,7 +163,7 @@ int addMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
     __CheckMatRet;
     if (mat->row != oth->row || mat->col != oth->col)
         return -4;
-    f *data2 = oth->data;
+    __f *data2 = oth->data;
     __RetMat(row, col, data_[i * col + j] = data[i * col + j] + data2[i * col + j];);
     return 1;
 }
@@ -175,13 +176,13 @@ int subtractMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
     __CheckMatRet;
     if (mat->row != oth->row || mat->col != oth->col)
         return -4;
-    f *data2 = oth->data;
+    __f *data2 = oth->data;
     __RetMat(row, col, data_[i * col + j] = data[i * col + j] - data2[i * col + j];);
     return 1;
 }
 
 // Add a scalar to a matrix
-int addScalar(const Matrix *mat, f num, Matrix *ret)
+int addScalar(const Matrix *mat, __f num, Matrix *ret)
 {
     __CheckMatRet;
     __RetMat(row, col, data_[i * col + j] = data[i * col + j] + num;);
@@ -189,13 +190,13 @@ int addScalar(const Matrix *mat, f num, Matrix *ret)
 }
 
 // Subtract a scalar from a matrix
-int subtractScalar(const Matrix *mat, f num, Matrix *ret)
+int subtractScalar(const Matrix *mat, __f num, Matrix *ret)
 {
     return addScalar(mat, -num, ret);
 }
 
 // Multiply a matrix with a scalar
-int multiplyScalar(const Matrix *mat, f num, Matrix *ret)
+int multiplyScalar(const Matrix *mat, __f num, Matrix *ret)
 {
     __CheckMatRet;
     __RetMat(row, col, data_[i * col + j] = data[i * col + j] * num;);
@@ -212,22 +213,22 @@ int multiplyMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
     if (mat->col != oth->row)
         return -4;
     int row = mat->row, col = mat->col, col2 = oth->col;
-    f *data = mat->data, *data2 = oth->data;
+    __f *data = mat->data, *data2 = oth->data;
     if (!ret->data || ret->row != row || ret->col != col2)
     {
         if (ret->data)
             free(ret->data);
         ret->row = row, ret->col = col2;
-        ret->data = (f *)malloc(row * col2 * SIZE_F);
+        ret->data = (__f *)malloc(row * col2 * __SIZEF);
     }
-    f *data_ = ret->data;
+    __f *data_ = ret->data;
     // Initial and multiply by order j->k->i
-    for (int i = 0; i < row * col2; i++)
+    for (int i = 0; i < row * col2; ++i)
         data_[i] = 0;
     for (int i = 0; i < row; ++i)
         for (int k = 0; k < col; ++k)
         {
-            f num1 = data[i * col + k];
+            __f num1 = data[i * col + k];
             for (int j = 0; j < col2; ++j)
                 data_[i * col2 + j] += num1 * data2[k * (col2) + j];
         }
@@ -235,12 +236,12 @@ int multiplyMatrix(const Matrix *mat, const Matrix *oth, Matrix *ret)
 }
 
 // Find the minimal values of a matrix
-f minOfMatrix(const Matrix *mat)
+__f minOfMatrix(const Matrix *mat)
 {
     if (!mat || mat->row == 0 || mat->col == 0)
         return NULLF;
     int row = mat->row, col = mat->col;
-    f *data = mat->data, ret = data[0];
+    __f *data = mat->data, ret = data[0];
     for (int i = 0; i < row * col; ++i)
         if (data[i] < ret)
             ret = data[i];
@@ -248,12 +249,12 @@ f minOfMatrix(const Matrix *mat)
 }
 
 // Find the maximal values of a matrix
-f maxOfMatrix(const Matrix *mat)
+__f maxOfMatrix(const Matrix *mat)
 {
     if (!mat || mat->row == 0 || mat->col == 0)
         return NULLF;
     int row = mat->row, col = mat->col;
-    f *data = mat->data, ret = data[0];
+    __f *data = mat->data, ret = data[0];
     for (int i = 0; i < row * col; ++i)
         if (data[i] > ret)
             ret = data[i];
@@ -261,26 +262,29 @@ f maxOfMatrix(const Matrix *mat)
 }
 
 // Compute the determinant of the matrix
-f det(const Matrix *mat)
+__f det(const Matrix *mat)
 {
+    // Check if exist and rows equals columns
     if (!mat || mat->row == 0 || mat->col != mat->row)
         return NULLF;
+    // Copy the data
     int row = mat->row, col = mat->col;
-    f *data1 = mat->data, ret = 1;
-    f *data = (f *)malloc(row * col * SIZE_F);
+    __f *data1 = mat->data, ret = 1;
+    __f *data = (__f *)malloc(row * col * __SIZEF);
     for (int i = 0; i < row * col; ++i)
         data[i] = data1[i];
+    // Eliminate for each row using Gauss Method
     for (int i = 0; i < row; ++i)
     {
-        // Set M_i,i != 0
+        // Check M_{i,i} != 0, if not change the rows
         for (int j = i; j < row; ++j)
             if (data[j * col + i] != 0)
             {
                 if (i != j)
-                {
+                { // Exchange two rows, determinant
                     for (int k = i; k < col; ++k)
                     {
-                        f tmpF = data[i * col + k];
+                        __f tmpF = data[i * col + k];
                         data[i * col + k] = data[j * col + k];
                         data[j * col + k] = tmpF;
                     }
@@ -289,17 +293,19 @@ f det(const Matrix *mat)
                 }
                 break;
             }
+        // If no rows can make M_{i,i} != 0, the determinant is 0
         if (data[i * col + i] == 0)
             return 0;
-        // Reduce by using Gauss Method
+        // Eliminate by using Gauss Method
         ret *= data[i * col + i];
         for (int j = i + 1; j < row; ++j)
         {
-            f num = data[j * col + i] / data[i * col + i];
+            __f num = data[j * col + i] / data[i * col + i];
             for (int k = i; k < col; ++k)
                 data[j * col + k] -= num * data[i * col + k];
         }
     }
+    // Delete the copy and return
     free(data);
     return ret;
 }
@@ -307,12 +313,14 @@ f det(const Matrix *mat)
 // Compute the inverse of the matrix
 int inv(const Matrix *mat, Matrix *ret)
 {
+    // Check if exist and rows equals columns
     __CheckMatRet;
     if (mat->row == 0 || mat->row != mat->col)
         return -4;
-    f matDet = det(mat);
+    __f matDet = det(mat);
     if (matDet == 0)
         return -6;
+    // If the size of matrix is 1x1
     if (mat->row == 1)
     {
         if (!ret->data || ret->row != 1 || ret->col != 1)
@@ -320,11 +328,12 @@ int inv(const Matrix *mat, Matrix *ret)
             if (ret->data)
                 free(ret->data);
             ret->row = 1, ret->col = 1;
-            ret->data = (f *)malloc(SIZE_F);
+            ret->data = (__f *)malloc(__SIZEF);
         }
         ret->data[0] = 1 / mat->data[0];
         return 1;
     }
+    // Else compute by using algebraic complement
     __RetMat(row, col,
              Matrix *tmp = NULLMatrix;
              cofactorMatrix(mat, j, i, tmp);
