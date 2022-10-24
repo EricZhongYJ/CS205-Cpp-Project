@@ -90,8 +90,8 @@ Operation:
 ##### 生成动态链并运行：
 
 ```bash
-gcc -shared -fPIC ./src/MatrixFunc.c -o libMatrix.so
-gcc ./src/Test.c -o CTask -L. -lMatrix
+gcc -shared -fPIC ./MatrixFunc.c -o libMatrix.so
+gcc ./Test.c -o CTask -L. -lMatrix
 export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH # Linux
 ./CTask
 ```
@@ -107,4 +107,17 @@ make
 ```
 
 示例参考报告第三部分。
+
+## 3. 文件说明
+
+| 文件名       | 内容解释                           |
+| ------------ | ---------------------------------- |
+| Matrix.h     | 矩阵结构体、宏定义与函数头         |
+| MatrixFunc.c | 矩阵结构体有关的函数               |
+| Test.c       | 交互式矩阵计算器的实现             |
+| Demo1.c      | Part 3示例1:基本要求的实现         |
+| Demo2.c      | Part 3示例2:对错误输入的判断       |
+| README.md    | 项目简述                           |
+| report.pdf   | 项目报告                           |
+| makefile     | 生成交互式矩阵计算器的makefile文件 |
 
