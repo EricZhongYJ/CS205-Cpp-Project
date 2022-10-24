@@ -17,7 +17,7 @@ typedef float __f;
 
 // Define the size of float and Matrix
 #define __SIZEF __SIZEOF_FLOAT__
-#ifdef __WIN32
+#if __SIZEOF_POINTER__ == 4
 #define __SIZEM 12
 #else
 #define __SIZEM 16
