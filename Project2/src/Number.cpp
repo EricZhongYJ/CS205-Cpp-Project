@@ -279,6 +279,8 @@ void Number::fix()
 void Number::clear0()
 {
     int i, len = coeN.len;
+    if (!len)
+        expN.len = 0;
     for (i = 0; coeN.numInv[i] == 0 && i < len; ++i)
         --coeN.len;
     if (i)
