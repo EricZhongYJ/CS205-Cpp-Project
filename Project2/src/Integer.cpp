@@ -19,10 +19,12 @@ Integer::Integer(int len_, char neg_)
 Integer::Integer(int unint)
 {
     len = 0, neg = unint < 0;
+    if (unint < 0)
+        unint = -unint;
     // For one digit integer
     if (unint < 10)
     {
-        numInv = new char[1]{unint < 0 ? char(-unint) : char(unint)};
+        numInv = new char[1]{char(unint)};
         if (unint) // not zero
             ++len;
         return;
