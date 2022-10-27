@@ -37,7 +37,7 @@ Number::Number(long double num)
     sprintf(str, "%.19Le", num);
     int dot = -1, e = -1, len = (int)strlen(str);
     // Check if num is inf or nan, return 0
-    if (str[len - 1] == 'f' || str[len - 1] == 'n')
+    if (str[len - 1] == 'f' || str[len - 1] == 'n' || str[3] == '#')
     {
         error[0] = 13;
         coeN = Integer(0), expN = Integer(0);
