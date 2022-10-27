@@ -62,6 +62,8 @@ Number::Number(long double num)
             str[i] = str[i + 1];
         }
     }
+    if (e)
+        str[e - 1] = '\0';
     // using construction from processed string
     Number ret = Number(str, dot, e);
     coeN = ret.coeN, expN = ret.expN;
