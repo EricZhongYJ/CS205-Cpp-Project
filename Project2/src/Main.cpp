@@ -318,7 +318,7 @@ void addOp(char op, int prior)
     }
     else if (opPt >= 0 && op != '(')
     {
-        while (priorSet[opPt] >= prior)
+        while (priorSet[opPt] >= prior && opPt >= 0)
             calculate();
     }
     if (error[0] || op == ')')
