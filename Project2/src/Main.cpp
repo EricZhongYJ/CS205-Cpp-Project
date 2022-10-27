@@ -207,12 +207,12 @@ void calculate()
     {
     case 0: // floor
         if (numSet[numPt].coeN.neg)
-            numSet[numPt] = numSet[numPt].minus(Number(Integer(999), Integer(-3)));
+            numSet[numPt] = numSet[numPt].minus(Number(Integer(999999), Integer(-1)));
         numSet[numPt].fix();
         goto RET_CAL;
     case 1: // ciel
         if (!numSet[numPt].coeN.neg)
-            numSet[numPt] = numSet[numPt].plus(Number(Integer(999), Integer(-3)));
+            numSet[numPt] = numSet[numPt].plus(Number(Integer(999999), Integer(-1)));
         numSet[numPt].fix();
         goto RET_CAL;
     case 2: // asin
