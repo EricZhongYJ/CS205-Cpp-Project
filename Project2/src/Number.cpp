@@ -23,11 +23,8 @@ Number::Number(char *str, int dot, int e)
     if (e >= 0)
         expN = Integer(&(str[e + 1]));
     else
-    {
         expN = Integer(0);
-        e = strlen(str) + 1;
-    }
-    expN = expN.plus(Integer((dot >= 0 ? dot - e : 0) + coeN.len));
+    expN = expN.plus(Integer((dot >= 0 ? dot - coeN.neg : coeN.len) - 1));
     clear0();
 }
 // Construction from long double
