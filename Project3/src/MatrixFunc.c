@@ -14,7 +14,7 @@
 Matrix *createMatrix(int row_, int col_, __f *data_)
 {
     // Check if the pointer is NULL, return 0x0 Matrix
-    if ((row_ || col_) && !data_)
+    if (row_ < 0 || col_ < 0 || (!data_ && (row_ || col_)))
         return NULLMatrix;
     Matrix *ret = (Matrix *)malloc(__SIZEM);
     ret->row = row_;
@@ -89,13 +89,14 @@ RETURN_NULL:
 }
 
 // Delete a matrix
-int deleteMatrix(Matrix *mat)
+int deleteMatrix(Matrix **mat)
 {
-    if (!mat)
+    if (!mat || !*mat)
         return -1;
-    if (mat->data)
-        free(mat->data);
-    free(mat);
+    if ((*mat)->data)
+        free((*mat)->data);
+    free(*mat);
+    *mat = NULL;
     return 1;
 }
 
@@ -295,7 +296,7 @@ __f det(const Matrix *mat)
             }
         // If no rows can make M_{i,i} != 0, the determinant is 0
         if (data[i * col + i] == 0)
-            return 0;
+            return 0.f;
         // Eliminate by using Gauss Method
         ret *= data[i * col + i];
         for (int j = i + 1; j < row; ++j)
@@ -338,7 +339,7 @@ int inv(const Matrix *mat, Matrix *ret)
              Matrix *tmp = NULLMatrix;
              cofactorMatrix(mat, j, i, tmp);
              data_[i * col + j] = ((i + j) % 2 ? -det(tmp) : det(tmp)) / matDet;
-             deleteMatrix(tmp);
+             deleteMatrix(&tmp);
              ;);
     return 1;
 }

@@ -44,7 +44,7 @@ Matrix *createMatrix(int row_, int col_, __f *data_);
 Matrix *createMatrixFromStr(const char *strOrg);
 
 // Delete a matrix
-int deleteMatrix(Matrix *mat);
+int deleteMatrix(Matrix **mat);
 
 // Transform a matrix to string
 char *to_string(const Matrix *mat);

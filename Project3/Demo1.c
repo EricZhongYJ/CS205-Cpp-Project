@@ -21,7 +21,7 @@ int main()
     printf("=======================================\n");
     copyMatrix(mat3, mat1);
     __show(1, mat1);
-    deleteMatrix(mat3);
+    deleteMatrix(&mat3);
     mat3 = createMatrixFromStr("[1,2,3;4,5,6;7,8,9]");
     __show(3, mat3);
     subMatrix(mat3, 1, 3, 1, 3, mat2);
