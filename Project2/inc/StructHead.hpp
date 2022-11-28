@@ -31,10 +31,10 @@ struct Integer
 
     // Compare Function:
     // To compare (with signed)
-    bool cmp(Integer oth);
+    bool cmp(Integer &oth);
 
     // To compare absolutely
-    char absCmp(Integer oth);
+    char absCmp(Integer &oth);
 
     // Calculate Function: (it will destroy the original object)
     // Add function
@@ -71,7 +71,7 @@ struct Number
     Number(char *str, int dot, int e);
 
     // Construction from long double
-    Number(long double num);
+    Number(ld num);
 
     // Copy function: construct a same Number
     Number copy();
@@ -86,10 +86,10 @@ struct Number
     char const *to_string();
 
     // Into long double for using function
-    long double to_longDouble();
+    ld to_longDouble();
 
     // Compare function: (with signed)
-    char cmp(Number oth);
+    char cmp(Number &oth);
 
     // Calculate Function: (it will destroy the original object)
     // Add function
