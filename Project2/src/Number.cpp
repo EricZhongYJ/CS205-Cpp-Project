@@ -31,7 +31,7 @@ Number::Number(char *str, int dot, int e)
     clear0();
 }
 // Construction from long double
-Number::Number(long double num)
+Number::Number(ld num)
 {
     char str[30];
     sprintf(str, "%.19Le", num);
@@ -109,15 +109,15 @@ char const *Number::to_string()
     return ret;
 }
 // Into long double for using function
-long double Number::to_longDouble()
+ld Number::to_longDouble()
 {
-    long double ret;
+    ld ret;
     sscanf(to_string(), "%Lf", &ret);
     return ret;
 }
 
 // To compare (with signed)
-char Number::cmp(Number oth)
+char Number::cmp(Number &oth)
 {
     // one is 0
     if (coeN.len == 0)
@@ -189,9 +189,9 @@ Number Number::divide(Number oth)
         error[0] = 12;
         return oth;
     }
-    // Calculate only 200 digit (because some fraction has infinite digit like 1/3)
-    Integer num1 = coeN.shift(400 - coeN.len, true);
-    Integer num2 = oth.coeN.shift(400 - oth.coeN.len, true);
+    // Calculate only __PREC1 digit (because some fraction has infinite digit like 1/3)
+    Integer num1 = coeN.shift(__PREC1N + 1 - coeN.len, true);
+    Integer num2 = oth.coeN.shift(__PREC1N + 1 - oth.coeN.len, true);
     num1.neg = 0, num2.neg = 0;
     char cmp = num1.absCmp(num2);
     if (cmp == 2) // num1 == num2
@@ -202,25 +202,25 @@ Number Number::divide(Number oth)
     else if (!cmp) // num1 < num2, expN--
     {
         expN = expN.minus(Integer(1));
-        for (int i = 0; i < 399; i++)
+        for (int i = 0; i < __PREC1N; i++)
             num2.numInv[i] = num2.numInv[i + 1];
         --num2.len;
     }
-    Number ret = Number(Integer(200, coeN.neg ^ oth.coeN.neg), expN.minus(oth.expN));
+    Number ret = Number(Integer(__PREC1, coeN.neg ^ oth.coeN.neg), expN.minus(oth.expN));
     // calculate digit by digit
-    for (int i = 0; i < 200; ++i)
+    for (int i = 0; i < __PREC1; ++i)
         for (char k = 0; k < 10; ++k)
         {
             cmp = num1.absCmp(num2);
             if (cmp == 2) // num1 - k * num2 == num2, record and return
             {
-                ret.coeN.numInv[199 - i] = k + 1;
+                ret.coeN.numInv[__PREC1 - 1 - i] = k + 1;
                 goto RETURN;
             }
             else if (!cmp) // num1 - k * num2 < num2, break and record
             {
-                ret.coeN.numInv[199 - i] = k;
-                for (int i = 0; i < 399; i++)
+                ret.coeN.numInv[__PREC1 - 1 - i] = k;
+                for (int i = 0; i < __PREC1N; i++)
                     num2.numInv[i] = num2.numInv[i + 1];
                 --num2.len;
                 break;
@@ -250,10 +250,10 @@ Number Number::powerI(long long expInt)
         if (expInt % 2)
             ret = ret.prod(under.copy());
         under = under.prod(under.copy());
-        if (under.coeN.len > 1500)
-            under.coeN = under.coeN.shift(1500 - under.coeN.len, 1);
-        if (ret.coeN.len > 1500)
-            ret.coeN = ret.coeN.shift(1500 - ret.coeN.len, 1);
+        if (under.coeN.len > __PREC2)
+            under.coeN = under.coeN.shift(__PREC2 - under.coeN.len, 1);
+        if (ret.coeN.len > __PREC2)
+            ret.coeN = ret.coeN.shift(__PREC2 - ret.coeN.len, 1);
         expInt >>= 1;
     }
     under.del();
@@ -281,9 +281,17 @@ void Number::clear0()
     int i, len = coeN.len;
     if (!len)
         expN.len = 0;
-    for (i = 0; coeN.numInv[i] == 0 && i < len; ++i)
+    char *&numInv = coeN.numInv;
+    for (i = 0; numInv[i] == 0 && i < len; ++i)
         --coeN.len;
+    // If over precission2
+    len = coeN.len;
+    if (len > __PREC2 + 100)
+    {
+        i += len - __PREC2;
+        len = coeN.len = __PREC2;
+    }
     if (i)
-        for (int k = 0; k < coeN.len; ++k)
-            coeN.numInv[k] = coeN.numInv[k + i];
+        for (int k = 0; k < len; ++k)
+            numInv[k] = numInv[k + i];
 }

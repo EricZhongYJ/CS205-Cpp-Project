@@ -81,14 +81,14 @@ long long Integer::to_longLong()
 }
 
 // To compare (with signed)
-bool Integer::cmp(Integer oth)
+bool Integer::cmp(Integer &oth)
 {
     if (neg != oth.neg)
         return neg < oth.neg;
     return absCmp(oth) ^ neg; // equal return true
 }
 // To compare absolutely
-char Integer::absCmp(Integer oth)
+char Integer::absCmp(Integer &oth)
 {
     if (len != oth.len)
         return len > oth.len;

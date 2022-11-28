@@ -77,7 +77,7 @@ void analyse(char *str)
                     else
                     {
                         addNumBOp;
-                        if (now == ')')
+                        if (now == ')' || now == '!')
                             isNum = true, numEnd = true, str[Id] = ')';
                     }
                     addOp(now, OP_PRIOR[j]);
@@ -245,7 +245,7 @@ void calculate()
         tmp = numSet[numPt].copy();
         tmp.coeN.neg = 0;
         tmp = tmp.minus(Number(Integer(1), Integer(0)));
-        while (tmp.coeN.len > 0 && !tmp.coeN.neg)
+        while (!tmp.expN.neg && !tmp.coeN.neg)
         {
             numSet[numPt] = numSet[numPt].prod(tmp.copy());
             tmp = tmp.minus(Number(Integer(1), Integer(0)));
@@ -414,7 +414,7 @@ int main()
         // Receive from input
         cout << "Please input the expression in the next line: (quit:q)" << endl;
         cin.getline(inpStr, 5000);
-        if (strcmp(inpStr, "q") == 0)
+        if (inpStr[0] == 'q' && inpStr[1] == '\0')
             return 0;
         // Remove the blanks
         int orgLen = (int)strlen(inpStr);
