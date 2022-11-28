@@ -110,9 +110,11 @@ for (size_t k = 0; k < col; ++k)
 }
 ```
 
-在本次项目中，这种方法成为`matmul_improved_sa`方法(sa表示storage access optimization)。这种方法虽然在矩阵乘法赋值式中仍然需要2次读取数据，但通过这种方法减少了索引计算中的乘法次数，在对较大的矩阵进行计算时耗时减少效果明显。
+在本次项目中，这种方法成为`matmul_improved_sa`方法(sa表示storage access optimization)。这种方法虽然在矩阵乘法赋值式中仍然需要2次读取数据，但通过这种方法减少了索引计算中的乘法次数，在对较大的矩阵进行计算时耗时减少效果明显，耗时对比如图：
 
-// 如图：
+<img src=".\pic\Part2_3.jpg" style="zoom:67%;" />
+
+
 
 #### (4) 使用SIMD和OpenMP进行优化：
 
@@ -386,19 +388,43 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx
 
 <img src=".\pic\O3_Test.jpg" style="zoom: 67%;" />
 
-可以看出，方法`matmul_improved`比方法`matmul_improved_sa`快，且均比方法`matmul_plain`快，他们的结果差的平均值为0，可以说明计算的准确性，耗时分析参考Part 4问题1.
+可以看出，方法`matmul_improved`比方法`matmul_improved_sa`快，且均比方法`matmul_plain`快，他们的结果差的平均值为0，可以说明计算的准确性，耗时分析参考Part 4问题.
 
 
 
 ## Part 4 - Difficulties & Solutions
 
-#### 问题1：不同方法运行的速度的比较
+#### 问题：不同方法运行的速度的比较
+
+未加编译`-O3`优化的运行结果：
 
 <img src=".\pic\Part4_1.jpg" style="zoom: 67%;" />
 
+由于矩阵乘法的时间复杂度大致满足时间是矩阵大小一定幂次若干倍(幂次接近3即`O(n^3)`)，我们可以使用对数坐标重新画这张图，则可以得到数据点接近在一条直线上：
+
 <img src=".\pic\Part4_2.jpg" style="zoom: 67%;" />
 
+通过拟合，我们可以得到这些直线，再经过简单的变换，得到：
+
+matmul_plain时间复杂度大概满足:t1 = 2.93e-09 * n^2.99
+matmul_improved_sa时间复杂度大概满足:t2 = 2.44e-09 * n^2.99
+matmul_improved时间复杂度大概满足:t3 = 8.28e-10 * n^2.96
+
 <img src=".\pic\Part4_3.jpg" style="zoom: 67%;" />
+
+由图可知，拟合直线与原数据几乎重合，拟合效果较好。
+
+对于增加编译`-O3`优化后的运行结果：
+
+<img src=".\pic\Part4_4.jpg" style="zoom: 67%;" />
+
+<img src=".\pic\Part4_5.jpg" style="zoom: 67%;" />
+
+我们可以做同样的拟合，进而有：
+
+matmul_plain时间复杂度大概满足:t1 = 5.47e-11 * n^3.19
+matmul_improved_sa时间复杂度大概满足:t2 = 1.51e-11 * n^3.44
+matmul_improved时间复杂度大概满足:t2 = 9.58e-11 * n^3.13
 
 
 
