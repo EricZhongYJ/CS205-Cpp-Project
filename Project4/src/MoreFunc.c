@@ -110,7 +110,7 @@ int rand_matrix_seed(Matrix *ret, __f N, size_t row, size_t col, size_t seed)
     for (size_t i = 0; i < row; ++i)
         for (size_t j = 0; j < col; ++j)
             // data_[i * row + j] = 2 * rand() - RAND_MAX;
-            data_[i * row + j] = (2 * rand() / (__f)RAND_MAX - 1) * N;
+            data_[i * row + j] = ((__f)2 * rand() / RAND_MAX - 1) * N;
     return 1;
 }
 // Generate random matrix with time seed from -100 to 100

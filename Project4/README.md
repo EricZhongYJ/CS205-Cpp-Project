@@ -58,7 +58,7 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 -O3 && ./Test
 
 ##### 运行测试：
 
-使用`makefile`来编译并运行([TestForData.c](./src/TestForData.c)中的检测例子)：
+使用`makefile`来编译并运行([TestForData.c](./src/TestForData.c)中的检测例子，相当于上面第一个操作)：
 
 ```bash
 make

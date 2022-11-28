@@ -348,7 +348,7 @@ int rand_matrix(Matrix *ret, __f N, size_t row, size_t col)
 
 #### Test case #1: 基本要求的实现：检查是否随机，对比乘法时间
 
-通过命令行运行[Test.c](./Test.c)中的测试(或加上`-O3`优化)，该例子通过
+通过命令行运行[Test.c](./Test.c)中的测试(或加上`-O3`优化)，该例子通过固定种子生成随机矩阵。
 
 ```bash
 gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 && ./Test
@@ -360,7 +360,9 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 -O3 && ./Test
 
 检查是否随机：
 
+<img src=".\pic\Random_Test.jpg" style="zoom: 67%;" />
 
+通过观察可知两矩阵没有相同元素，且均值比较接近0，随机性较好。
 
 对比乘法时间部分截图请参考Test case #2.
 
@@ -368,7 +370,7 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 -O3 && ./Test
 
 #### Test case #2: 通过大量计算、对比不同平台运行的耗时
 
-通过命令行运行[TestForData.c](./src/TestForData.c)中的测试(或加上`-O3`优化)
+通过命令行运行[TestForData.c](./src/TestForData.c)中的测试(或加上`-O3`优化，或直接使用`make`编译并运行)，该例子通过时间种子生成随机矩阵。
 
 ```bash
 gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx2 && ./TestForData
@@ -384,16 +386,23 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx
 
 <img src=".\pic\O3_Test.jpg" style="zoom: 67%;" />
 
-可以看出，方法`matmul_improved`比方法`matmul_improved_sa`快，且均比方法`matmul_plain`快，耗时分析参考Part 4问题1.
+可以看出，方法`matmul_improved`比方法`matmul_improved_sa`快，且均比方法`matmul_plain`快，他们的结果差的平均值为0，可以说明计算的准确性，耗时分析参考Part 4问题1.
 
 
 
 ## Part 4 - Difficulties & Solutions
 
-#### 问题1：在不同系统下运行产生的问题
+#### 问题1：不同方法运行的速度的比较
+
+<img src=".\pic\Part4_1.jpg" style="zoom: 67%;" />
+
+<img src=".\pic\Part4_2.jpg" style="zoom: 67%;" />
+
+<img src=".\pic\Part4_3.jpg" style="zoom: 67%;" />
 
 
 
 ## Part 5 - Summary
 
 本次项目
+
