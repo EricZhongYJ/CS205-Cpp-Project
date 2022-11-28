@@ -116,7 +116,7 @@ int rand_matrix_seed(Matrix *ret, __f N, size_t row, size_t col, size_t seed)
 // Generate random matrix with time seed from -100 to 100
 int rand_matrix(Matrix *ret, __f N, size_t row, size_t col)
 {
-    if (__TIME_SEED == (int)time(NULL)) // Relate with time
+    if (__TIME_SEED == -1) // Relate with time
         __TIME_SEED = (int)time(NULL);
     else // Generate a random seed only depend on time
     {

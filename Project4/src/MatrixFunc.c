@@ -105,7 +105,7 @@ char *to_string(const Matrix *mat)
     __f *data = mat->data;
     char *ret = (char *)malloc((15 * row * col + row + 25) * sizeof(char));
     char *tmp = (char *)malloc(20 * sizeof(char));
-    sprintf(ret, "Matrix %dx%d:\n[\n", row, col);
+    sprintf(ret, "Matrix %ldx%ld:\n[\n", row, col);
     for (size_t i = 0; i < row; ++i)
     {
         for (size_t j = 0; j < col; ++j)
