@@ -342,3 +342,58 @@ int rand_matrix(Matrix *ret, __f N, size_t row, size_t col)
 }
 ```
 
+
+
+## Part 3 - Result & Verification
+
+#### Test case #1: 基本要求的实现：检查是否随机，对比乘法时间
+
+通过命令行运行[Test.c](./Test.c)中的测试(或加上`-O3`优化)，该例子通过
+
+```bash
+gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 && ./Test
+```
+
+```bash
+gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 -O3 && ./Test
+```
+
+检查是否随机：
+
+
+
+对比乘法时间部分截图请参考Test case #2.
+
+
+
+#### Test case #2: 通过大量计算、对比不同平台运行的耗时
+
+通过命令行运行[TestForData.c](./src/TestForData.c)中的测试(或加上`-O3`优化)
+
+```bash
+gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx2 && ./TestForData
+```
+
+```bash
+gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx2 -O3 && ./TestForData
+```
+
+<img src=".\pic\O0_Test.jpg" style="zoom: 67%;" />
+
+通过-O3优化：
+
+<img src=".\pic\O3_Test.jpg" style="zoom: 67%;" />
+
+可以看出，方法`matmul_improved`比方法`matmul_improved_sa`快，且均比方法`matmul_plain`快，耗时分析参考Part 4问题1.
+
+
+
+## Part 4 - Difficulties & Solutions
+
+#### 问题1：在不同系统下运行产生的问题
+
+
+
+## Part 5 - Summary
+
+本次项目
