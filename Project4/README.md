@@ -76,4 +76,3 @@ make
 | MoreFunc.c    | Project4-改进矩阵乘法、生成随机矩阵方法     |
 | TestForData.c | Project4-三种矩阵乘法耗时对比               |
 | Test.c        | Project4-随机矩阵显示、两种矩阵乘法耗时对比 |
-
