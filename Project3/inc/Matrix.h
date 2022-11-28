@@ -26,7 +26,7 @@ typedef float __f;
 // Matrix struct
 struct Matrix
 {
-    int row, col;
+    size_t row, col;
     __f *data;
 };
 typedef struct Matrix Matrix;
@@ -40,7 +40,7 @@ typedef struct Matrix Matrix;
 //             -5:the input float row or col is wrong
 //             -6:the Matrix is not invertible
 // Create a matrix from string or data
-Matrix *createMatrix(int row_, int col_, __f *data_);
+Matrix *createMatrix(size_t row_, size_t col_, __f *data_);
 Matrix *createMatrixFromStr(const char *strOrg);
 
 // Delete a matrix
@@ -52,9 +52,9 @@ char *to_string(const Matrix *mat);
 // Copy a matrix (copy the data from a matrix to another)
 int copyMatrix(const Matrix *mat, Matrix *ret);
 // Get submatrix (include ~Begin, not include ~End)
-int subMatrix(const Matrix *mat, int rowBegin, int rowEnd, int colBegin, int colEnd, Matrix *ret);
+int subMatrix(const Matrix *mat, size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEnd, Matrix *ret);
 // Get cofactor matrix
-int cofactorMatrix(const Matrix *mat, int rowAt, int colAt, Matrix *ret);
+int cofactorMatrix(const Matrix *mat, size_t rowAt, size_t colAt, Matrix *ret);
 
 // Compute
 // Add two matrices
@@ -88,7 +88,7 @@ int rotate90(const Matrix *mat, Matrix *ret);
 
 // Create datas to store for change return matrix ret
 #define __RetMat(_row, _col, _code)                         \
-    int row = mat->row, col = mat->col;                     \
+    size_t row = mat->row, col = mat->col;                     \
     if (!ret->data || ret->row != _row || ret->col != _col) \
     {                                                       \
         if (ret->data)                                      \
@@ -97,8 +97,8 @@ int rotate90(const Matrix *mat, Matrix *ret);
         ret->data = (__f *)malloc((_row) * (_col)*__SIZEF); \
     }                                                       \
     __f *data = mat->data, *data_ = ret->data;              \
-    for (int i = 0; i < _row; ++i)                          \
-        for (int j = 0; j < _col; ++j)                      \
+    for (size_t i = 0; i < _row; ++i)                          \
+        for (size_t j = 0; j < _col; ++j)                      \
         {                                                   \
             _code                                           \
         }
