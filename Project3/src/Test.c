@@ -4,10 +4,10 @@
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 // Version: gcc (MinGW.org GCC Build-2) 9.2.0
 // Date: 2022/10/24
-#include "../inc/Matrix.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../inc/Matrix.h"
 
 // This file is to test and also an implement.
 // Clear the bash under different operation system
@@ -39,7 +39,7 @@
         check = 0;                                                       \
         printf("Please input %s:\n", str);                               \
         scanf("%s", input);                                              \
-        for (int i = 0; i < (int)strlen(input); i++)                     \
+        for (size_t i = 0; i < strlen(input); i++)                     \
             if ((input[i] < '0' || input[i] > '9') && input[i] != '.' && \
                 input[i] != '-' && input[i] != 'e' && input[i] != 'E')   \
                 check = 1;                                               \
@@ -202,7 +202,7 @@ int main(int argc, char const *argv[])
                 sscanf(input, fFormat, &num3);
                 __InputF("the end of col(not include)");
                 sscanf(input, fFormat, &num4);
-                err = subMatrix(mats[id1], (int)num1, (int)num2, (int)num3, (int)num4, temp);
+                err = subMatrix(mats[id1], (size_t)num1, (size_t)num2, (size_t)num3, (size_t)num4, temp);
                 __ShowMatBack;
             case '4':
                 __Choose("a");
@@ -211,7 +211,7 @@ int main(int argc, char const *argv[])
                 sscanf(input, fFormat, &num1);
                 __InputF("the col");
                 sscanf(input, fFormat, &num2);
-                err = cofactorMatrix(mats[id1], (int)num1, (int)num2, temp);
+                err = cofactorMatrix(mats[id1], (size_t)num1, (size_t)num2, temp);
                 __ShowMatBack;
             case '5':
                 __Choose("the first");
