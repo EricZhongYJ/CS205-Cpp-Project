@@ -51,7 +51,7 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 && ./Test
 ```
 
 ```bash
-gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c.c -o Test -mavx2 -O3 && ./Test
+gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 -O3 && ./Test
 ```
 
 
