@@ -34,7 +34,7 @@
 
 ##### 通过命令行编译运行：
 
-第一行为运行[TestForData.c](./src/TestForData.c)中的例子(或加上`-O3`优化)
+运行[TestForData.c](./src/TestForData.c)中的测试(或加上`-O3`优化)
 
 ```bash
 gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx2 && ./TestForData
@@ -44,7 +44,7 @@ gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx
 gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./src/TestForData.c -o TestForData -mavx2 -O3 && ./TestForData
 ```
 
-第一行为运行[Test.c](./Test.c)中的例子(或加上`-O3`优化)
+运行[Test.c](./Test.c)中的测试(或加上`-O3`优化)
 
 ```bash
 gcc ./src/MatrixFunc.c ./src/MoreFunc.c ./Test.c -o Test -mavx2 && ./Test
