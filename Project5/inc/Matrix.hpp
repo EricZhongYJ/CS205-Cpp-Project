@@ -3,9 +3,9 @@
 // Encode: UTF-8
 // Version: gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
 // Version: gcc (x86_64-posix-sjlj-rev0, Built by MinGW-W64 project) 12.2.0
-// Date: 2022/11/27
+// Date: 2022/12/18
 #pragma once
-#include <type_traits>
+#include <iostream>
 // Matrix template class
 template <typename _T>
 class Matrix
@@ -102,11 +102,23 @@ public:
     _T min() const;
     _T max() const;
     // Compute the determinant
-    _T det() const;
+    long double det(size_t chaAt = 0) const;
     // Compute the inverse
-    Matrix<long double> inv() const;
+    Matrix<long double> inv(size_t chaAt = 0) const;
     // Transpose the matrix
     Matrix<_T> transpose() const;
     // Rotate 90 degree on the matrix
     Matrix<_T> rotate90() const;
 };
+
+// Friend function head
+template<typename _T>
+std::ostream &operator<<(std::ostream &os, const Matrix<_T> &m);
+template<typename _T>
+Matrix<_T> operator+(_T num, const Matrix<_T> &oth);
+template<typename _T>
+Matrix<_T> operator-(_T num, const Matrix<_T> &oth);
+template<typename _T>
+Matrix<_T> operator*(_T num, const Matrix<_T> &oth);
+template<typename _T>
+Matrix<_T> operator/(_T num, const Matrix<_T> &oth);
