@@ -5,32 +5,27 @@
 // Version: gcc (x86_64-posix-sjlj-rev0, Built by MinGW-W64 project) 12.2.0
 // Date: 2022/11/27
 #include <string.h>
-#include <ostream>
 #include "../inc/Matrix.hpp"
 
 // Template micro
 #define _TP template <typename _T>
 #define _MAT Matrix<_T>
+// To print the error and its position
 #define __PRINT_ERROR(tip) \
     std::cerr << "Error: " << (tip) << "\n\t" << __BASE_FILE__ << "\n\t" << __FILE__ << ":" << __LINE__ << " : " << __func__ << std::endl;
-// Optimization include
-// #include <omp.h>   // openMP
-// #ifdef __aarch64__ // Arm core
-// #include <arm_neon.h>
-// #define __m256 float32x4_t
-// #define _mm256_setzero_ps() vdupq_n_f32(0)
-// #define _mm256_loadu_ps vld1q_f32
-// #define _mm256_add_ps vaddq_f32
-// #define _mm256_mul_ps vmulq_f32
-// #define _mm256_storeu_ps vst1q_f32
-// #define _N_ 4
-// #else // Intel core
-// #include <immintrin.h>
-// #define _N_ 8
-// #endif
-// #ifdef __MINGW32__
-// #define aligned_alloc(a,b) _aligned_malloc(b,a)
-// #endif
+// To check if this is an empty Matrix
+#define __CHECK_MAT(tip)                  \
+    if (!row || !col || !channel || !ref) \
+    {                                     \
+        __PRINT_ERROR(tip);               \
+        return _MAT();                    \
+    }
+#define __CHECK__T(tip)                   \
+    if (!row || !col || !channel || !ref) \
+    {                                     \
+        __PRINT_ERROR(tip);               \
+        return _T();                      \
+    }
 
 // Construction function
 _TP _MAT::Matrix() {}
@@ -142,10 +137,10 @@ _TP char *_MAT::tostring() const
     {
         if (channel > 1)
         {
-            sprintf(tmp, "Channel %d:\n", k);
+            sprintf(tmp, "Channel %ld:\n", k);
             strcat(ret, tmp);
         }
-        sprintf(tmp, "Matrix %dx%d:\n[\n", row, col);
+        sprintf(tmp, "Matrix %ldx%ld:\n[\n", row, col);
         strcat(ret, tmp);
         for (size_t i = 0; i < row; ++i)
         {
@@ -242,7 +237,8 @@ _TP _MAT _MAT::getChannelMat(size_t chaAt) const
 // Get value by index
 _TP _T &_MAT::operator()(size_t rowAt, size_t colAt, size_t chaAt) const
 {
-    if (!row || !col || !channel || !ref || rowAt >= row || colAt >= col)
+    __CHECK_MAT("The fisrt Matrix is an empty Matrix when using 'operator()'.");
+    if (rowAt >= row || colAt >= col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'operator()'.");
         return _T();
@@ -252,7 +248,8 @@ _TP _T &_MAT::operator()(size_t rowAt, size_t colAt, size_t chaAt) const
 // Get submatrix (do not copy)
 _TP _MAT _MAT::sub(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEnd) const
 {
-    if (!row || !col || !channel || !ref || rowBegin >= row || rowEnd > row || colBegin >= col || colEnd > col)
+    __CHECK_MAT("The fisrt Matrix is an empty Matrix when using 'sub()'.");
+    if (rowBegin >= row || rowEnd > row || colBegin >= col || colEnd > col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'sub()'.");
         return _MAT();
@@ -275,7 +272,8 @@ _TP _MAT _MAT::sub(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEn
 // Get submatrix (do not copy)
 _TP _MAT _MAT::subCopy(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEnd) const
 {
-    if (!row || !col || !channel || !ref || rowBegin >= row || rowEnd > row || colBegin >= col || colEnd > col)
+    __CHECK_MAT("The fisrt Matrix is an empty Matrix when using 'subCopy()'.");
+    if (rowBegin >= row || rowEnd > row || colBegin >= col || colEnd > col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'subCopy()'.");
         return _MAT();
@@ -293,14 +291,15 @@ _TP _MAT _MAT::subCopy(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t c
     ret.data = new _T[channel * ret.row * col_];
     ret.at = ret.data;
     for (size_t k = 0; k < channel; ++k)
-        for (size_t i = 0; i < col_; ++i)
+        for (size_t i = 0; i < row; ++i)
             memcpy(ret.at + (k * row + i) * col_, at + ((k * row + rowBegin + i) * col + colBegin), col_ * sizeof(_T));
     return ret;
 }
 // Get cofactor matrix (deep)
 _TP _MAT _MAT::cofactorMatrix(size_t rowAt, size_t colAt) const
 {
-    if (!row || !col || !channel || !ref || rowAt >= row || colAt >= col)
+    __CHECK_MAT("The fisrt Matrix is an empty Matrix when using 'cofactorMatrix()'.");
+    if (rowAt >= row || colAt >= col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'cofactorMatrix()'.");
         return _MAT();
@@ -353,11 +352,7 @@ __COMPARE_FUNCTION(>=)
 #define __CALC_NUM(signal, name)                                                                                                                          \
     _TP _MAT _MAT::operator signal(_T num) const                                                                                                          \
     {                                                                                                                                                     \
-        if (!row || !col || !channel || !ref)                                                                                                             \
-        {                                                                                                                                                 \
-            __PRINT_ERROR("Empty Matrix cannot " #name " a number.");                                                                                     \
-            return _MAT();                                                                                                                                \
-        }                                                                                                                                                 \
+        __CHECK_MAT("Empty Matrix cannot " #name " a number.")                                                                                            \
         __CREATE_RETURN(row, col, channel,                                                                                                                \
                         for (size_t i = 0; i < row * channel; ++i) for (size_t j = 0; j < col; ++j)                                                       \
                             data_[i * col + j] = at[i * lines + j] signal num;);                                                                          \
@@ -390,12 +385,8 @@ __COMPARE_FUNCTION(>=)
 #define __CALC_MAT(signal, name)                                                                       \
     _TP _MAT _MAT::operator signal(const _MAT &oth) const                                              \
     {                                                                                                  \
-        if (!row || !col || !channel || !ref)                                                          \
-        {                                                                                              \
-            __PRINT_ERROR("Empty Matrix cannot " #name " a matrix.");                                  \
-            return _MAT();                                                                             \
-        }                                                                                              \
-        else if (!oth.row || !oth.col || !oth.channel || !oth.ref)                                     \
+        __CHECK_MAT("Empty Matrix cannot " #name " a matrix.");                                        \
+        if (!oth.row || !oth.col || !oth.channel || !oth.ref)                                          \
         {                                                                                              \
             __PRINT_ERROR("Empty Matrix cannot be " #name "ed.");                                      \
             return _MAT();                                                                             \
@@ -417,12 +408,8 @@ __CALC_NUM(*, multiply)
 __CALC_NUM(/, divide)
 _TP _MAT _MAT::operator*(const Matrix &oth) const
 {
-    if (!row || !col || !channel || !ref)
-    {
-        __PRINT_ERROR("Empty Matrix cannot multiply a matrix.");
-        return _MAT();
-    }
-    else if (!oth.row || !oth.col || !oth.channel || !oth.ref)
+    __CHECK_MAT("Empty Matrix cannot multiply a matrix.");
+    if (!oth.row || !oth.col || !oth.channel || !oth.ref)
     {
         __PRINT_ERROR("Empty Matrix cannot be multiplied.");
         return _MAT();
@@ -463,12 +450,8 @@ _TP _MAT _MAT::operator/(const Matrix &oth) const
 }
 _TP _MAT _MAT::operator^(int num) const
 {
-    if (!row || !col || !channel || !ref)
-    {
-        __PRINT_ERROR("Empty Matrix cannot join power.");
-        return _MAT();
-    }
-    else if (row != col)
+    __CHECK_MAT("Empty Matrix cannot join power.");
+    if (row != col)
     {
         __PRINT_ERROR("Only square Matrix can join power.");
         return _MAT();
@@ -492,14 +475,141 @@ _TP _MAT _MAT::operator^(int num) const
         if (num % 2)
             Id *= temp;
         temp *= temp;
-        num >>= 1
+        num >>= 1;
     }
     return Id;
+}
+// Find the minimal/Maximal values of a matrix
+_TP _T _MAT::min() const
+{
+    __CHECK__T("Empty Matrix have no minimial value.");
+    _T ret = at[0];
+    for (size_t i = 0; i < row * channel; ++i)
+    {
+        _T *temp = at + i * lines;
+        for (size_t j = 0; j < col; ++j, ++temp)
+            if (*temp < ret)
+                ret = *temp;
+    }
+    return ret;
+}
+_TP _T _MAT::max() const
+{
+    __CHECK__T("Empty Matrix have no maximial value.");
+    _T ret = at[0];
+    for (size_t i = 0; i < row * channel; ++i)
+    {
+        _T *temp = at + i * lines;
+        for (size_t j = 0; j < col; ++j, ++temp)
+            if (*temp > ret)
+                ret = *temp;
+    }
+    return ret;
+}
+// Compute the determinant
+_TP long double _MAT::det(size_t chaAt) const
+{
+    // Check if it is empty
+    if (!row || !col || !channel || !ref)
+    {
+        __PRINT_ERROR("Empty Matrix has no determinant.");
+        return 0.L;
+    }
+    if (row != col)
+        __PRINT_ERROR("Only square Matrix has determinant.");
+    // Copy the data
+    long double data_[row * col], ret = 0.L;
+    for (size_t i = 0; i < row * col; ++i)
+        data_[i] = (long double)at[i];
+    // Eliminate for each row using Gauss Method
+    for (size_t i = 0; i < row; ++i)
+    {
+        // Check M_{i,i} != 0, if not change the rows
+        for (size_t j = i; j < row; ++j)
+            if (data_[j * col + i] != 0)
+            {
+                if (i != j)
+                { // Exchange two rows, determinant
+                    for (size_t k = i; k < col; ++k)
+                    {
+                        long double tmp = data_[i * col + k];
+                        data_[i * col + k] = data_[j * col + k];
+                        data_[j * col + k] = tmp;
+                    }
+                    if ((j - i) % 2)
+                        ret *= -1;
+                }
+                break;
+            }
+        // If no rows can make M_{i,i} != 0, the determinant is 0
+        if (data_[i * col + i] == 0)
+            return 0.L;
+        // Eliminate by using Gauss Method
+        ret *= data_[i * col + i];
+        for (size_t j = i + 1; j < row; ++j)
+        {
+            long double num = data_[j * col + i] / data_[i * col + i];
+            for (size_t k = i; k < col; ++k)
+                data_[j * col + k] -= num * data_[i * col + k];
+        }
+    }
+    return ret;
+}
+// Compute the inverse
+_TP Matrix<long double> _MAT::inv(size_t chaAt) const
+{
+    // Check if it is empty
+    if (!row || !col || !channel || !ref)
+    {
+        __PRINT_ERROR("Empty Matrix has no inverse.");
+        return Matrix<long double>();
+    }
+    if (row != col)
+    {
+        __PRINT_ERROR("Only square Matrix has inverse.");
+        return Matrix<long double>();
+    }
+    // If the size of matrix is 1x1
+    if (row == 1)
+    {
+        long double ret = 1.L / at[chaAt * row * lines];
+        return Matrix<long double>(1, 1, new long double[1]{ret}, 1);
+    }
+    long double *data_ = new long double[row * col], matDet = det();
+    for (size_t i = 0; i < row; ++i)
+        for (size_t j = 0; j < col; ++j)
+        {
+            Matrix tmp = cofactorMatrix(j, i);
+            data_[i * col + j] = ((i + j) % 2 ? -det(tmp) : det(tmp)) / matDet;
+        }
+    return Matrix<long double>(row, col, data_, 1);
+}
+// Transpose the matrix
+_TP _MAT _MAT::transpose() const
+{
+    __CHECK_MAT("Empty Matrix has no transpose.");
+    long double *data_ = new long double[row * col], matDet = det();
+    for (size_t i = 0; i < col; ++i)
+        for (size_t j = 0; j < row; ++j)
+            data_[i * row + j] = at[j * col + i];
+    return Matrix<long double>(col, row, data_, 1);
+}
+// Rotate 90 degree on the matrix
+_TP _MAT _MAT::rotate90() const
+{
+    __CHECK_MAT("Empty Matrix has no rotated Matrix.");
+    long double *data_ = new long double[row * col], matDet = det();
+    for (size_t i = 0; i < col; ++i)
+        for (size_t j = 0; j < row; ++j)
+            data_[i * row + j] = at[j * col + col - i - 1];
+    return Matrix<long double>(col, row, data_, 1);
 }
 
 #undef _TP
 #undef _MAT
 #undef __PRINT_ERROR
+#undef __CHECK_MAT
+#undef __CHECK__T
 #undef __COMPARE_FUNCTION
 #undef __CREATE_RETURN
 #undef __CALC_NUM
