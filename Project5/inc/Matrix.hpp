@@ -15,6 +15,8 @@ class Matrix
         std::is_same_v<_T, bool> ||
             std::is_same_v<_T, char> ||
             std::is_same_v<_T, unsigned char> ||
+            std::is_same_v<_T, short> ||
+            std::is_same_v<_T, unsigned short> ||
             std::is_same_v<_T, int> ||
             std::is_same_v<_T, unsigned int> ||
             std::is_same_v<_T, long> ||
@@ -33,7 +35,7 @@ class Matrix
 public:
     // Construction function
     Matrix();
-    Matrix(size_t r, size_t c, const _T *d, size_t cha = 1);
+    Matrix(size_t r, size_t c, _T *d, size_t cha = 1);
     Matrix(const char *strOrg);
     // Distruction function
     ~Matrix();
@@ -44,20 +46,20 @@ public:
     // friend std::ostream &operator<<(std::ostream &os, const Matrix<_T> &m);
 
     // Copy function
-    Matrix(const Matrix &oth);
+    Matrix(const Matrix<_T> &oth);
     Matrix &operator=(const Matrix &oth);
     // Deep copy
     Matrix<_T> copy() const;
-    // Copy as another type of Matrix (deep)
+    // Copy from another type of Matrix (deep)
     template <typename __T>
-    Matrix<__T> copyAs(__T eg) const;
+    Matrix(const Matrix<__T> &oth);
     // Get value by index
     _T &operator()(size_t rowAt, size_t colAt, size_t chaAt = 0) const;
     // Get the size of Matrix
     size_t getRow() const;
     size_t getCol() const;
     size_t getChannel() const;
-    Matrix<_T> getChannelMat(size_t chaAt) const;
+    Matrix<_T> getChannelMat(size_t chaAt = 0) const;
     // Get submatrix
     Matrix<_T> sub(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEnd) const;
     Matrix<_T> subCopy(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEnd) const;
@@ -112,13 +114,13 @@ public:
 };
 
 // Friend function head
-template<typename _T>
+template <typename _T>
 std::ostream &operator<<(std::ostream &os, const Matrix<_T> &m);
-template<typename _T>
+template <typename _T>
 Matrix<_T> operator+(_T num, const Matrix<_T> &oth);
-template<typename _T>
+template <typename _T>
 Matrix<_T> operator-(_T num, const Matrix<_T> &oth);
-template<typename _T>
+template <typename _T>
 Matrix<_T> operator*(_T num, const Matrix<_T> &oth);
-template<typename _T>
+template <typename _T>
 Matrix<_T> operator/(_T num, const Matrix<_T> &oth);

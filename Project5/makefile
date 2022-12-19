@@ -11,7 +11,7 @@ CFLAGES = -c -Wall
 SRC_DIR = ./src
 # 包含inc所有文件
 INC = -I./inc
-SRC = $(SRC_DIR)/Test.cpp
+SRC = $(SRC_DIR)/Test0.cpp
 OBJS = $(patsubst %.cpp, %.o, $(SRC))
 # 生成文件名
 TARGET = CppTask

@@ -5,6 +5,7 @@
 // Version: gcc (x86_64-posix-sjlj-rev0, Built by MinGW-W64 project) 12.2.0
 // Date: 2022/11/27
 #include <string.h>
+#include <omp.h>
 #include "../inc/Matrix.hpp"
 
 // Template micro
@@ -29,14 +30,15 @@
 
 // Construction function
 _TP _MAT::Matrix() {}
-_TP _MAT::Matrix(size_t r, size_t c, const _T *d, size_t cha)
+_TP _MAT::Matrix(size_t r, size_t c, _T *d, size_t cha)
 {
     if (r && c && cha && d)
     {
         row = r, col = c, lines = c, channel = cha;
         ref = new int(1);
-        data = new _T[cha * r * lines], at = data;
-        memcpy(data, d, cha * r * c * sizeof(_T));
+        // data = new _T[cha * r * lines], at = data;
+        // memcpy(at, d, cha * r * c * sizeof(_T));
+        data = d, at = d;
     }
     else
         __PRINT_ERROR("The input row/col/channel are zero or data is empty when initializing a matrix.")
@@ -191,31 +193,28 @@ _TP _MAT _MAT::copy() const
     _MAT ret;
     if (row && col && channel && ref)
     {
-        _T *data_ = new _T[channel * row * lines];
-        memcpy(data_, data, row * lines * channel * sizeof(_T));
-        ret.row = row, ret.col = col, ret.lines = lines;
+        _T *data_ = new _T[channel * row * col];
+        for (size_t i = 0; i < channel * row; ++i)
+            memcpy(data_ + i * col, at + i * lines, col * sizeof(_T));
+        ret.row = row, ret.col = col, ret.lines = col;
         ret.channel = channel, ret.ref = new int(1);
-        ret.data = data_;
-        ret.at = size_t(at - data) + data_;
+        ret.data = data_, ret.at = data_;
     }
     return ret;
 }
 // Copy as another type of Matrix (deep)
 _TP template <typename __T>
-Matrix<__T> _MAT::copyAs(__T eg) const
+_MAT::Matrix(const Matrix<__T> &oth)
 {
-    _MAT ret;
-    if (row && col && channel && ref)
+    if (oth.getRow() && oth.getCol() && oth.getChannel())
     {
-        __T *data_ = new __T[row * col];
-        for (size_t i = 0; i < row * col; ++i)
-            data_[i] = (__T)at[i];
-        ret.row = row, ret.col = col, ret.lines = lines;
-        ret.channel = channel, ret.ref = new int(1);
-        ret.data = data_;
-        ret.at = size_t(at - data) + data_;
+        row = oth.getRow(), col = oth.getCol(), lines = oth.getCol();
+        channel = oth.getChannel(), ref = new int(1);
+        data = new _T[channel * row * col], at = data;
+        for (size_t i = 0; i < channel * row; ++i)
+            for (size_t j = 0; j < col; ++j)
+                data[i * col + j] = (_T)oth(i, j);
     }
-    return ret;
 }
 
 // Get the size of Matrix
@@ -231,17 +230,22 @@ _TP _MAT _MAT::getChannelMat(size_t chaAt) const
     }
     _MAT ret;
     ret.row = row, ret.col = col, ret.lines = lines;
-    ret.ref = ref, ret.data = data;
+    ret.ref = ref, ret.data = data, ret.channel = 1;
+    ++*ref;
     ret.at = at + chaAt * row * lines;
 };
 // Get value by index
 _TP _T &_MAT::operator()(size_t rowAt, size_t colAt, size_t chaAt) const
 {
-    __CHECK_MAT("The fisrt Matrix is an empty Matrix when using 'operator()'.");
+    if (!row || !col || !channel || !ref)
+    {
+        __PRINT_ERROR("The fisrt Matrix is an empty Matrix when using 'operator()'.");
+        return at[0];
+    }
     if (rowAt >= row || colAt >= col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'operator()'.");
-        return _T();
+        return at[0];
     }
     return at[(chaAt * row + rowAt) * lines + colAt];
 }
@@ -263,7 +267,7 @@ _TP _MAT _MAT::sub(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t colEn
     ret.row = rowEnd - rowBegin;
     ret.col = colEnd - colBegin;
     ret.lines = lines;
-    ret.channel = channel;
+    ret.channel = channel; // Only 1 better
     ret.ref = ref, ++*ref;
     ret.data = data;
     ret.at = at + (rowBegin * lines + colBegin);
@@ -291,8 +295,8 @@ _TP _MAT _MAT::subCopy(size_t rowBegin, size_t rowEnd, size_t colBegin, size_t c
     ret.data = new _T[channel * ret.row * col_];
     ret.at = ret.data;
     for (size_t k = 0; k < channel; ++k)
-        for (size_t i = 0; i < row; ++i)
-            memcpy(ret.at + (k * row + i) * col_, at + ((k * row + rowBegin + i) * col + colBegin), col_ * sizeof(_T));
+        for (size_t i = 0; i < ret.row; ++i)
+            memcpy(ret.at + (k * ret.row + i) * col_, at + ((k * row + rowBegin + i) * col + colBegin), col_ * sizeof(_T));
     return ret;
 }
 // Get cofactor matrix (deep)
@@ -304,20 +308,15 @@ _TP _MAT _MAT::cofactorMatrix(size_t rowAt, size_t colAt) const
         __PRINT_ERROR("The index was out of range of Matrix when using 'cofactorMatrix()'.");
         return _MAT();
     }
-    _MAT ret;
-    ret.row = row - 1;
     size_t col_ = col - 1;
-    ret.col = col_, ret.lines = col_;
-    ret.channel = channel, ret.ref = new int(1);
-    ret.data = new _T[channel * ret.row * col_];
-    ret.at = ret.data;
+    _T *data_ = new _T[channel * (row - 1) * col_];
     for (size_t k = 0; k < channel; ++k)
-        for (size_t i = 0; i < col_; ++i)
+        for (size_t i = 0; i < row - 1; ++i)
         {
-            memcpy(ret.at + (k * row + i) * col_, at + (k * row + i + (i >= rowAt)) * col, colAt * sizeof(_T));
-            memcpy(ret.at + (k * row + i) * col_ + colAt, at + (k * row + i + (i >= rowAt)) * col + colAt + 1, col_ - colAt * sizeof(_T));
+            memcpy(data_ + (k * row - k + i) * col_, at + (k * row + i + (i >= rowAt)) * lines, colAt * sizeof(_T));
+            memcpy(data_ + ((k * row - k + i) * col_ + colAt), at + (k * row + i + (i >= rowAt)) * lines + colAt + 1, (col_ - colAt) * sizeof(_T));
         }
-    return ret;
+    return _MAT(row - 1, col_, data_, channel);
 }
 
 // All calculate function:
@@ -422,6 +421,7 @@ _TP _MAT _MAT::operator*(const Matrix &oth) const
     // Use the Multiply with only storage access optimization to staisfy all data type
     _T *data_ = new _T[channel * row * col]();
     for (size_t n = 0; n < channel; ++n)
+#pragma omp parallel for
         for (size_t i = 0; i < row; ++i)
         {
             _T *num3 = data_ + ((n * oth.row + i) * oth.col);
@@ -518,9 +518,10 @@ _TP long double _MAT::det(size_t chaAt) const
     if (row != col)
         __PRINT_ERROR("Only square Matrix has determinant.");
     // Copy the data
-    long double data_[row * col], ret = 0.L;
-    for (size_t i = 0; i < row * col; ++i)
-        data_[i] = (long double)at[i];
+    long double data_[row * col], ret = 1.L;
+    for (size_t i = 0; i < row; ++i)
+        for (size_t j = 0; j < col; ++j)
+            data_[i * col + j] = (long double)at[i * lines + j];
     // Eliminate for each row using Gauss Method
     for (size_t i = 0; i < row; ++i)
     {
@@ -575,12 +576,13 @@ _TP Matrix<long double> _MAT::inv(size_t chaAt) const
         long double ret = 1.L / at[chaAt * row * lines];
         return Matrix<long double>(1, 1, new long double[1]{ret}, 1);
     }
-    long double *data_ = new long double[row * col], matDet = det();
+    long double *data_ = new long double[row * col], matDet = det(chaAt);
+    // #pragma omp parallel for
     for (size_t i = 0; i < row; ++i)
         for (size_t j = 0; j < col; ++j)
         {
             Matrix tmp = cofactorMatrix(j, i);
-            data_[i * col + j] = ((i + j) % 2 ? -det(tmp) : det(tmp)) / matDet;
+            data_[i * col + j] = ((i + j) % 2 ? -tmp.det() : tmp.det()) / matDet;
         }
     return Matrix<long double>(row, col, data_, 1);
 }
@@ -588,20 +590,22 @@ _TP Matrix<long double> _MAT::inv(size_t chaAt) const
 _TP _MAT _MAT::transpose() const
 {
     __CHECK_MAT("Empty Matrix has no transpose.");
-    long double *data_ = new long double[row * col], matDet = det();
-    for (size_t i = 0; i < col; ++i)
-        for (size_t j = 0; j < row; ++j)
-            data_[i * row + j] = at[j * col + i];
+    long double *data_ = new long double[channel * row * col], matDet = det();
+    for (size_t k = 0; k < channel; ++k)
+        for (size_t i = 0; i < col; ++i)
+            for (size_t j = 0; j < row; ++j)
+                data_[(k * col + i) * row + j] = at[(k * row + j) * lines + i];
     return Matrix<long double>(col, row, data_, 1);
 }
 // Rotate 90 degree on the matrix
 _TP _MAT _MAT::rotate90() const
 {
     __CHECK_MAT("Empty Matrix has no rotated Matrix.");
-    long double *data_ = new long double[row * col], matDet = det();
-    for (size_t i = 0; i < col; ++i)
-        for (size_t j = 0; j < row; ++j)
-            data_[i * row + j] = at[j * col + col - i - 1];
+    long double *data_ = new long double[channel * row * col], matDet = det();
+    for (size_t k = 0; k < channel; ++k)
+        for (size_t i = 0; i < col; ++i)
+            for (size_t j = 0; j < row; ++j)
+                data_[(k * col + i) * row + j] = at[(k * row + j) * lines + col - i - 1];
     return Matrix<long double>(col, row, data_, 1);
 }
 
