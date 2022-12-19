@@ -28,6 +28,7 @@ class Matrix
             std::is_same_v<_T, long double>,
         "The element type of Matrix must be Numberic. Matrix.hpp:8");
     // Datas
+    static _T NULL_T;
     size_t row = 0, col = 0, lines = 0, channel = 0;
     int *ref = 0;
     _T *data = 0, *at = 0;

@@ -25,8 +25,10 @@
     if (!row || !col || !channel || !ref) \
     {                                     \
         __PRINT_ERROR(tip);               \
-        return _T();                      \
+        return _MAT::NULL_T;              \
     }
+// Initial static variable Matrix<_T>::NULL_T
+_TP _T _MAT::NULL_T = _T();
 
 // Construction function
 _TP _MAT::Matrix() {}
@@ -233,15 +235,12 @@ _TP _MAT _MAT::getChannelMat(size_t chaAt) const
     ret.ref = ref, ret.data = data, ret.channel = 1;
     ++*ref;
     ret.at = at + chaAt * row * lines;
+    return ret;
 };
 // Get value by index
 _TP _T &_MAT::operator()(size_t rowAt, size_t colAt, size_t chaAt) const
 {
-    if (!row || !col || !channel || !ref)
-    {
-        __PRINT_ERROR("The fisrt Matrix is an empty Matrix when using 'operator()'.");
-        return at[0];
-    }
+    __CHECK__T("The fisrt Matrix is an empty Matrix when using 'operator()'.")
     if (rowAt >= row || colAt >= col)
     {
         __PRINT_ERROR("The index was out of range of Matrix when using 'operator()'.");
@@ -573,10 +572,21 @@ _TP Matrix<long double> _MAT::inv(size_t chaAt) const
     // If the size of matrix is 1x1
     if (row == 1)
     {
+        if (!at[0])
+        {
+            __PRINT_ERROR("The Matrix is not invertible.");
+            return Matrix<long double>();
+        }
         long double ret = 1.L / at[chaAt * row * lines];
         return Matrix<long double>(1, 1, new long double[1]{ret}, 1);
     }
+    // If the size of matrix is not 1x1
     long double *data_ = new long double[row * col], matDet = det(chaAt);
+    if (!matDet)
+    {
+        __PRINT_ERROR("The Matrix is not invertible.");
+        return Matrix<long double>();
+    }
     // #pragma omp parallel for
     for (size_t i = 0; i < row; ++i)
         for (size_t j = 0; j < col; ++j)
