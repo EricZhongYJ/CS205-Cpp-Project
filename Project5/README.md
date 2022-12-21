@@ -85,7 +85,8 @@ g++ ./src/Test2.cpp -o Test2 -w & ./Test2
 | 错误类型                                       | 相关函数                                                     |
 | ---------------------------------------------- | ------------------------------------------------------------ |
 | 使用Matrix<_T>中不允许的模板数据类型(编译报错) | 错误类名                                                     |
-| 构造指针为0的矩阵                              | 构造函数                                                     |
+| 构造指针为0的矩阵                              | 传入行、列、通道(=1)数和数据指针的构造函数                   |
+| 通过错误格式的字符串构造矩阵                   | 传入字符串的构造函数                                         |
 | 传入矩阵为空矩阵                               | 括号索引、+-*/^运算、sub()、subCopy()、cofactorMatrix()      |
 | 传入矩阵为空矩阵                               | det()、inv()、min()、max()、transpose()、rotate90()、getChannelMat() |
 | 传入行、列、通道数越界                         | 括号索引、sub()、subCopy()、cofactorMatrix()、getChannelMat() |
@@ -100,3 +101,4 @@ Error: The fisrt Matrix is an empty Matrix when using 'operator()'.
 	/mnt/d/VScodeProjects/CppClass/Project5/src/Test1.cpp
 	/mnt/d/VScodeProjects/CppClass/Project5/src/Matrix.cpp:243 : operator()
 ```
+

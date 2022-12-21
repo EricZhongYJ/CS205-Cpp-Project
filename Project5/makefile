@@ -6,7 +6,7 @@
 
 # 在终端输入make即可编译并运行文件
 CXX = g++
-CFLAGES = -c -Wall
+CFLAGES = -c -w
 
 SRC_DIR = ./src
 # 包含inc所有文件

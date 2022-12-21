@@ -48,8 +48,12 @@ _TP _MAT::Matrix(size_t r, size_t c, _T *d, size_t cha)
 // Create a matrix from string
 _TP _MAT::Matrix(const char *strOrg)
 {
+    // Check if string is empty
     if (!strOrg)
+    {
+        __PRINT_ERROR("The input string is NULL when initializing a matrix.");
         return;
+    }
     // Copy the string
     size_t orgLen = strlen(strOrg);
     char str[orgLen];
@@ -65,7 +69,10 @@ _TP _MAT::Matrix(const char *strOrg)
     size_t len = strlen(str);
     // Check format error
     if (len < 3 || str[0] != '[' || str[1] == ',' || str[1] == ';' || str[1] == ']' || str[len - 1] != ']')
+    {
+        __PRINT_ERROR("The input string must be with the form [ ,;] when initializing a matrix.");
         return;
+    }
     while (str[len - 1] == ',' || str[len - 1] == ';' || str[len - 1] == ']')
         str[--len] = '\0';
     // Count rows and cols
@@ -587,7 +594,7 @@ _TP Matrix<long double> _MAT::inv(size_t chaAt) const
         __PRINT_ERROR("The Matrix is not invertible.");
         return Matrix<long double>();
     }
-    // #pragma omp parallel for
+#pragma omp parallel for
     for (size_t i = 0; i < row; ++i)
         for (size_t j = 0; j < col; ++j)
         {
@@ -600,7 +607,7 @@ _TP Matrix<long double> _MAT::inv(size_t chaAt) const
 _TP _MAT _MAT::transpose() const
 {
     __CHECK_MAT("Empty Matrix has no transpose.");
-    long double *data_ = new long double[channel * row * col], matDet = det();
+    long double *data_ = new long double[channel * row * col];
     for (size_t k = 0; k < channel; ++k)
         for (size_t i = 0; i < col; ++i)
             for (size_t j = 0; j < row; ++j)
@@ -611,7 +618,7 @@ _TP _MAT _MAT::transpose() const
 _TP _MAT _MAT::rotate90() const
 {
     __CHECK_MAT("Empty Matrix has no rotated Matrix.");
-    long double *data_ = new long double[channel * row * col], matDet = det();
+    long double *data_ = new long double[channel * row * col];
     for (size_t k = 0; k < channel; ++k)
         for (size_t i = 0; i < col; ++i)
             for (size_t j = 0; j < row; ++j)
@@ -619,6 +626,7 @@ _TP _MAT _MAT::rotate90() const
     return Matrix<long double>(col, row, data_, 1);
 }
 
+// Clear the micro
 #undef _TP
 #undef _MAT
 #undef __PRINT_ERROR
