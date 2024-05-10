@@ -37,6 +37,6 @@ cmake . & make
 ./Project2.out
 ```
 
-## 3. 运行示例
+## 3. Report and examples (in Chinese)
 
-在程序报告`report.pdf`(或`porject{i}.md`)文件中的第三部分，一般会给出较多的示例，可以通过代码的运行来验证其后附图与程序的正确性。
+In the third part of the program report 'report.pdf' (or 'porject{i}.md') file, more examples are generally given, and the correctness of the attached drawings and programs can be verified by running the code.
