@@ -40,3 +40,8 @@ cmake . & make
 ## 3. Report and examples (in Chinese)
 
 In the third part of the program report 'report.pdf' (or 'porject{i}.md') file, more examples are generally given, and the correctness of the attached drawings and programs can be verified by running the code.
+
+## 4. Snapshot
+
+![](./Project5/SnapshotMatCal.png)
+
