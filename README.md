@@ -45,4 +45,4 @@ In the third part of the program report 'report.pdf' (or 'porject{i}.md') file, 
 
 ![](./Project5/SnapshotMatCal.png)
 
-Tip: The type of the output matrix is dicide by the first matrix in the calculation. Eg. b + c is a intergal matrix, which is the same as the type of b.
+Tip: The type of the output matrix is dicided by the first matrix in the calculation. Eg. b + c is a intergal matrix, which is the same as the type of b.
