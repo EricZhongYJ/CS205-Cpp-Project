@@ -1,4 +1,4 @@
-# CS205 C/C++ Programming - 2022 Fall - Projects
+# CS205 C/C++ Programming - 2022 Fall - Projects: Matrix Calculator
 
 **Name:** Yuanji Zhong
 
