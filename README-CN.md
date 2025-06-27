@@ -1,4 +1,4 @@
-# CS205 C/C++ Programming - 2022 Fall - Projects
+# CS205 C/C++ Programming - 2022 Fall - Projects: 矩阵计算器
 
 **Name:** 钟元吉(Zhong Yuanji)
 
